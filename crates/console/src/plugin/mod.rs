@@ -293,7 +293,11 @@ fn publish_client_action_input(
     binds: Res<KeyBinds>,
     mut scripted: ResMut<ConsoleInputState>,
     console: Res<ConsoleState>,
-    (script_menus, minecraft): (Option<Res<hud::ScriptMenus>>, Option<Res<frame::MinecraftUi>>),
+    (script_menus, minecraft, mut alex): (
+        Option<Res<hud::ScriptMenus>>,
+        Option<Res<frame::MinecraftUi>>,
+        Option<ResMut<frame::AlexMode>>,
+    ),
     mut hud_input: ResMut<frame::HudInputView>,
     settings: Res<frame::GameSettings>,
     mut out: ResMut<ClientActionInput>,
@@ -358,6 +362,13 @@ fn publish_client_action_input(
     });
     if !skate.input_blocked && (keys.just_pressed(KeyCode::KeyJ) || sticks_clicked) {
         skate.toggle_requested = true;
+    }
+    // K toggles Alex Mercer mode.
+    if let Some(alex) = alex.as_deref_mut() {
+        alex.input_blocked = skate.input_blocked;
+        if !alex.input_blocked && keys.just_pressed(KeyCode::KeyK) {
+            alex.toggle_requested = true;
+        }
     }
     let modal_captured = console.open
         || script_menu

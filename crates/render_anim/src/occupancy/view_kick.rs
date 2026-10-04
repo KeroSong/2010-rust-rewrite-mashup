@@ -237,7 +237,7 @@ pub fn tick_session_view_kick(
 }
 
 pub fn sync_camera_from_presented(
-    skate: Res<frame::SkateMode>,
+    (skate, alex): (Res<frame::SkateMode>, Option<Res<frame::AlexMode>>),
     mut killcam: Local<super::killcam::KillcamCamera>,
     clock: Res<FrameClock>,
     presented: Res<PresentedSnapshot>,
@@ -267,9 +267,8 @@ pub fn sync_camera_from_presented(
     let Some(ps) = presented.player(local.0) else {
         return;
     };
-    if skate.active
-        && let Some((eye, fov)) = skate.camera
-    {
+    let alex_camera = alex.as_ref().filter(|a| a.active).and_then(|a| a.camera);
+    if let Some((eye, fov)) = skate.camera.filter(|_| skate.active).or(alex_camera) {
         for mut transform in &mut q {
             *transform = eye;
         }

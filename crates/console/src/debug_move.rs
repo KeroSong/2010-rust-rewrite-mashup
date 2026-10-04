@@ -47,6 +47,7 @@ pub(crate) fn spawn_showpos_hud(commands: &mut Commands, font: Handle<Font>) {
 
 pub(crate) fn register_debug_move_commands(registry: &mut ConsoleRegistry) {
     registry.register(crate::CommandSpec::new("skate").usage("skate [on|off|status] - local Skate gameplay (J toggles)"));
+    registry.register(crate::CommandSpec::new("alex").usage("alex [on|off|status] - Alex Mercer locomotion on a Minecraft world (K toggles)"));
     if registry.resolve("showpos").is_none() {
         registry.register(
             crate::CommandSpec::new("showpos")
@@ -117,6 +118,7 @@ pub(crate) fn route_debug_move_commands(
     mut seq: ResMut<net::ActionRequestIds>,
     mut look: ResMut<LookState>,
     mut dispatch: ResMut<ConsoleDispatch>,
+    mut alex: Option<ResMut<frame::AlexMode>>,
 ) {
     let capacity = settings.log_capacity;
     let echo = |msg: String, console: &mut ConsoleState, line: &mut ConsoleLine| {
@@ -136,6 +138,21 @@ pub(crate) fn route_debug_move_commands(
                     _ => { echo("usage: skate [on|off|status]".into(), &mut console, &mut line); continue; }
                 }
                 echo(format!("skate active={} ready={} controller={:?} tick={} {}",skate.active,skate.preloaded,skate.controller,skate.tick,skate.status),&mut console,&mut line);
+            }
+
+            "alex" => {
+                let Some(alex) = alex.as_deref_mut() else {
+                    echo("alex: mode unavailable".into(), &mut console, &mut line);
+                    continue;
+                };
+                match cmd.args.first().map(String::as_str) {
+                    Some("status") => {},
+                    Some("on") => { alex.toggle_requested = !alex.active; },
+                    Some("off") => { alex.toggle_requested = alex.active; },
+                    None => { alex.toggle_requested = true; },
+                    _ => { echo("usage: alex [on|off|status]".into(), &mut console, &mut line); continue; }
+                }
+                echo(format!("alex active={} {}", alex.active, alex.status), &mut console, &mut line);
             }
 
             "showpos" | "debug_pos" => match cmd.args.first().map(String::as_str) {

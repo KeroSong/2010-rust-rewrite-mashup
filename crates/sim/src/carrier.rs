@@ -271,6 +271,12 @@ impl SimWorld {
         self.frame().set_origin(id, origin)
     }
 
+    /// Animate an externally moved player: `movetype` and `event` are
+    /// `anim_iw4::ANIM_MT_NAMES` / `ANIM_ET_NAMES` indices.
+    pub fn play_external_anim(&mut self, id: ClientId, movetype: Option<u8>, event: Option<u8>) {
+        crate::combat::apply_external_anim(&mut self.frame(), id, movetype, event);
+    }
+
     pub fn set_legs_anim(&mut self, id: ClientId, legs_anim: i32) -> bool {
         self.frame().set_legs_anim(id, legs_anim)
     }

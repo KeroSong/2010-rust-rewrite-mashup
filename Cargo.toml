@@ -8,6 +8,7 @@ quinn-proto = { git = "https://github.com/quinn-rs/quinn", rev = "f650e0f213b01e
 resolver = "3"
 exclude = ["skate", "third_party/minecraftoss"]
 members = [
+    "crates/alex_motion",
     "crates/anim_iw4",
     "crates/approved_tests",
     "crates/asset_core",
@@ -122,6 +123,7 @@ asset_material = { path = "crates/asset_material" }
 asset_model = { path = "crates/asset_model" }
 asset_world = { path = "crates/asset_world" }
 assets = { path = "crates/assets" }
+alex_motion = { path = "crates/alex_motion" }
 audio = { path = "crates/audio" }
 bots = { path = "crates/bots" }
 clipmap_iw4 = { path = "crates/clipmap_iw4" }

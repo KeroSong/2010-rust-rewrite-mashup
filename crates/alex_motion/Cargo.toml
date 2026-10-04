@@ -1,0 +1,12 @@
+[package]
+name = "alex_motion"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+description = "Alex Mercer locomotion: run, sprint, charged jump, glide, wall run. Pure, no Bevy, collision behind a trait."
+
+[dependencies]
+glam.workspace = true
+
+[lints]
+workspace = true

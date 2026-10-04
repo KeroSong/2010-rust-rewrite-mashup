@@ -314,8 +314,8 @@ fn update(
     ),
     mut view: ResMut<MinecraftWorldView>,
     mut runtime: NonSendMut<Runtime>,
-    (skate, cameras, gamepads, active_pad): (
-        Res<frame::SkateMode>,
+    ((skate, alex), cameras, gamepads, active_pad): (
+        (Res<frame::SkateMode>, Option<Res<frame::AlexMode>>),
         Query<&Transform, With<render_scene::FlyCamera>>,
         Query<&bevy::input::gamepad::Gamepad>,
         Option<Res<frame::ActivePad>>,
@@ -754,7 +754,8 @@ fn update(
         .unwrap_or(16.0 / 9.0);
     // Culled from the camera that draws: the player's eye, or while
     // skating the Skate camera (a frame behind, so with room to spare).
-    let skate_camera = cameras.iter().next().filter(|_| skate.active).map(|t| {
+    let alex_active = alex.as_ref().is_some_and(|a| a.active);
+    let skate_camera = cameras.iter().next().filter(|_| skate.active || alex_active).map(|t| {
         let at = sim::voxel::to_block(origin, t.translation.to_array());
         let ahead = t.rotation * Vec3::NEG_Z;
         (

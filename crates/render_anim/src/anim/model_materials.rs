@@ -196,6 +196,7 @@ pub fn prepare_model_materials(
     for model in [
         assets::bot_model::local_bot_model(),
         assets::bot_model::local_skate_board(),
+        assets::bot_model::local_alex_model(),
     ]
     .into_iter()
     .flatten()

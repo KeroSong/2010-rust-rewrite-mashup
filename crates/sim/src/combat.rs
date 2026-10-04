@@ -956,6 +956,45 @@ pub(crate) fn apply_player_anim_event_forced(
     apply_player_anim_event_inner(world, id, event, None, force);
 }
 
+/// A player moved by an external controller (Alex mode) runs no PMove, so
+/// nothing picks its animations: the controller names a movement type and,
+/// optionally, an event (jump, land), and the player anim script does the rest
+/// with the player's weapon conditions, as PMove would.
+pub(crate) fn apply_external_anim(
+    world: &mut FrameWorld,
+    id: ClientId,
+    movetype: Option<u8>,
+    event: Option<u8>,
+) {
+    if let Some(event) = event {
+        apply_player_anim_event_inner(world, id, event, None, true);
+    }
+    let Some(movetype) = movetype else {
+        return;
+    };
+    let Some(script) = world.player_anim_script() else {
+        return;
+    };
+    let Some(ps) = world.player(id).copied() else {
+        return;
+    };
+    let (view_w, primary) = crate::pmove_anim_weapon_ids(&ps);
+    let conds = crate::anim_conditions_from_pmove(
+        &ps,
+        world.combat_facts_for(view_w),
+        world.combat_facts_for(primary),
+        Some(movetype),
+        0,
+        0,
+    );
+    let Some(ps) = world.player_mut(id) else {
+        return;
+    };
+    if let Some(selected) = script.apply(ps, movetype, id.0, &conds, true) {
+        world.set_anim_movement(id, selected, 0);
+    }
+}
+
 fn apply_player_anim_event_inner(
     world: &mut FrameWorld,
     id: ClientId,

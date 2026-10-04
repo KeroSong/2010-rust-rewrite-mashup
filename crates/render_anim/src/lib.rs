@@ -45,4 +45,6 @@ mod minecraft_mining;
 mod minecraft_minimap;
 mod minecraft_sounds;
 pub mod minecraft_world;
+pub mod alex;
+pub mod alex_model;
 pub mod skate;

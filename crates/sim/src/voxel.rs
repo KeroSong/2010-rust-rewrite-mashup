@@ -568,7 +568,7 @@ impl VoxelWorld {
 }
 
 /// A box swept from `start` to `end` in map space against the block world.
-pub(crate) fn trace(
+pub fn trace(
     start: [f32; 3],
     end: [f32; 3],
     mins: [f32; 3],

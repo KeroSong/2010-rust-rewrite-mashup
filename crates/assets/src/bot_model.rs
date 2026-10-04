@@ -112,8 +112,23 @@ pub fn local_skate_board() -> Option<&'static BotModel> {
         .as_ref()
 }
 
+/// Alex Mercer for the local Alex mode: the same mesh format plus his skeleton
+/// and clips, read by `render_anim::alex_model`. Preconverted from the player's
+/// own Prototype files; never part of the repository.
+pub fn local_alex_model() -> Option<&'static BotModel> {
+    static MODEL: OnceLock<Option<BotModel>> = OnceLock::new();
+    MODEL
+        .get_or_init(|| {
+            let path = std::env::var_os("IW4L_ALEX_MODEL")?;
+            load(Path::new(&path))
+                .map_err(|e| diag::warn!(World, "Alex model: {e}"))
+                .ok()
+        })
+        .as_ref()
+}
+
 pub(crate) fn install_local_bot_materials(catalog: &mut MaterialCatalog) {
-    for model in [local_bot_model(), local_skate_board()]
+    for model in [local_bot_model(), local_skate_board(), local_alex_model()]
         .into_iter()
         .flatten()
     {
